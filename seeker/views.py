@@ -1881,7 +1881,7 @@ class AdvancedSavedSearchView(View):
             try:
                 url = request.GET.get(self.url_parameter)
             except KeyError:
-                return JsonResponse({ 'error': 'No URL provided.' }, 400)
+                return JsonResponse({ 'error': 'No URL provided.' }, status=400)
 
             SavedSearchModel = self.get_saved_search_model()
             saved_searches = self.get_saved_searches(url, SavedSearchModel)
@@ -1890,7 +1890,7 @@ class AdvancedSavedSearchView(View):
                 try:
                     saved_search = saved_searches.get(pk=search_pk)
                 except SavedSearchModel.DoesNotExist:
-                    return JsonResponse({ 'error': 'Saved search not found.' }, 400)
+                    return JsonResponse({ 'error': 'Saved search not found.' }, status=400)
             else:
                 # By design this will return None if there are no default searches found
                 saved_search = saved_searches.filter(default=True).first()
@@ -1919,7 +1919,7 @@ class AdvancedSavedSearchView(View):
             try:
                 url = request.POST.get(self.url_parameter)
             except KeyError:
-                return JsonResponse({'error': 'No URL provided.'}, 400)
+                return JsonResponse({'error': 'No URL provided.'}, status=400)
 
             search_pk = kwargs.get(self.pk_parameter, request.POST.get(self.pk_parameter, None))
             SavedSearchModel = self.get_saved_search_model()
@@ -1936,7 +1936,7 @@ class AdvancedSavedSearchView(View):
                 except SavedSearchModel.DoesNotExist:
                     # We only want to throw an error if we cannot find the object AND we are NOT trying to delete it anyway
                     if not delete:
-                        return JsonResponse({'error': 'Saved search not found.'}, 400)
+                        return JsonResponse({'error': 'Saved search not found.'}, status=400)
 
             data = {}
             # We have three paths: delete, modify_default, or save
