@@ -1785,6 +1785,8 @@ class AdvancedSeekerView(SeekerView):
         if all(k in advanced_query for k in ('id', 'operator', 'value')):
             if advanced_query['id'] not in excluded_facets:
                 facet = facet_lookup.get(advanced_query['id'])
+                if not facet:
+                    raise Http404(f'Invalid facet: {advanced_query["id"]}')
                 return facet.query(advanced_query['operator'], advanced_query['value']), [facet.field]
             return None, None
 
