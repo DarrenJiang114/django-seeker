@@ -526,7 +526,7 @@ class RangeFilter(Facet):
 class DateRangeFacet(RangeFilter):
     advanced_template = 'advanced_seeker/facets/date_range.html'
 
-    def __init__(self, field, format="MM/dd/yyyy", format_validator='%m/%d/%Y', **kwargs):
+    def __init__(self, field, format="MM/DD/YYYY", format_validator='%m/%d/%Y', **kwargs):
         self.format = format
         self.format_validator = format_validator
         super(DateRangeFacet, self).__init__(field, **kwargs)
