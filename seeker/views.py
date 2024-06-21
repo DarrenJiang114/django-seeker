@@ -1646,6 +1646,14 @@ class AdvancedSeekerView(SeekerView):
         display = self.get_display(self.search_object['display'], facets_searched)
         sort = bool(export) or not self.always_display_highlighted_columns
         columns = self.get_columns(display, sort=sort)
+        sort = self.get_sort_field(columns, self.search_object['sort'], display)
+
+        if sort:
+            if (self.missing_sort is None or isinstance(sort, dict)) and isinstance(sort, list):
+                search = search.sort(*self.sort_descriptor(sort))
+            else:
+                search = search.sort(self.sort_descriptor(sort))
+
         if export:
             return self.export(search, columns)
 
@@ -1657,14 +1665,7 @@ class AdvancedSeekerView(SeekerView):
             search = self.apply_highlight(search, columns)
 
         # Finally, grab the results.
-        sort = self.get_sort_field(columns, self.search_object['sort'], display)
-        if sort:
-            if (self.missing_sort is None or isinstance(sort, dict)) and isinstance(sort, list):
-                results = search.sort(*self.sort_descriptor(sort))[offset:upper_paging_limit].execute()
-            else:
-                results = search.sort(self.sort_descriptor(sort))[offset:upper_paging_limit].execute()
-        else:
-            results = search[offset:upper_paging_limit].execute()
+        results = search[offset:upper_paging_limit].execute()
 
         if not self.separate_aggregation_search:
             aggregation_results = results
