@@ -31,7 +31,7 @@
                 <input type="hidden" name="_export" value="true" />
                 <p>
                     <em>Found {{ total_hits|intcomma }} result{{ total_hits|pluralize }} in {{ results.took }} millisecond{{ results.took|pluralize }}</em>
-                    {% block export-link %}&mdash;<button {% block export-link-id-attribute %}id="export-link"{% endblock export-link-id-attribute %} class="btn btn-link">{% trans "Export these results" %}</button>{% endblock export-link %}
+                    {% block export-link %}&mdash; <button {% block export-link-id-attribute %}id="export-link"{% endblock export-link-id-attribute %} class="btn btn-link">{% trans "Export these results" %}</button>{% endblock export-link %}
                 </p>
             </form>
     {% else %}
