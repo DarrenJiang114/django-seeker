@@ -1519,7 +1519,7 @@ class AdvancedSeekerView(SeekerView):
             try:
                 string_search_object = request.POST.get('search_object')
                 if not isinstance(string_search_object, (str, bytes, bytearray)):
-                    return Http404(f'Invalid POST data type: {type(string_search_object)}')
+                    raise Http404(f'Invalid POST data type: {type(string_search_object)}')
                 # We attach this to self so AdvancedColumn can have access to it
                 self.search_object = json.loads(string_search_object)
             except KeyError:
@@ -1675,7 +1675,7 @@ class AdvancedSeekerView(SeekerView):
                 else:
                     results = search.sort(self.sort_descriptor(sort))[offset:upper_paging_limit].execute()
             except Exception as e:
-                return Http404(f'Invalid sort: {str(e)}')
+                raise Http404(f'Invalid sort: {str(e)}')
         else:
             results = search[offset:upper_paging_limit].execute()
 
@@ -1807,7 +1807,7 @@ class AdvancedSeekerView(SeekerView):
             condition = advanced_query.get('condition')
             group_operator = self.boolean_translations.get(condition, None)
             if not group_operator:
-                return Http404(f"'{condition}' is not a valid boolean operator.")
+                raise Http404(f"'{condition}' is not a valid boolean operator.")
 
             queries = []
             selected_facets = []
