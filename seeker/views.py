@@ -1675,7 +1675,7 @@ class AdvancedSeekerView(SeekerView):
                 else:
                     results = search.sort(self.sort_descriptor(sort))[offset:upper_paging_limit].execute()
             except Exception as e:
-                raise Http404(f'Invalid sort: {str(e)}')
+                raise Http404(f'Invalid sort')
         else:
             results = search[offset:upper_paging_limit].execute()
 
