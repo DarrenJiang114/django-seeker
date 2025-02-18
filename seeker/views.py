@@ -4,6 +4,7 @@ import copy
 import inspect
 import itertools
 import json
+import logging
 import re
 import warnings
 from datetime import datetime
@@ -33,6 +34,7 @@ from .templatetags.seeker import seeker_format
 from seeker.utils import is_ajax, update_timestamp_index
 
 seekerview_field_templates = {}
+logger = logging.getLogger(__name__)
 
 
 class Column(object):
@@ -1368,6 +1370,9 @@ class AdvancedSeekerView(SeekerView):
                 "'get_search_query_type' function is deprecated, please use 'get_keyword_query' instead.",
                 DeprecationWarning
             )
+            
+    def get_logger(self, request):
+        return logger
 
     def modify_json_response(self, json_response, context):
         """
@@ -1519,7 +1524,8 @@ class AdvancedSeekerView(SeekerView):
             try:
                 string_search_object = request.POST.get('search_object')
                 if not isinstance(string_search_object, (str, bytes, bytearray)):
-                    raise Http404(f'Invalid POST data type: {type(string_search_object)}')
+                    self.get_logger().info(f'Invalid POST data type: {type(string_search_object)}')
+                    raise Http404()
                 # We attach this to self so AdvancedColumn can have access to it
                 self.search_object = json.loads(string_search_object)
             except KeyError:
@@ -1675,7 +1681,8 @@ class AdvancedSeekerView(SeekerView):
                 else:
                     results = search.sort(self.sort_descriptor(sort))[offset:upper_paging_limit].execute()
             except Exception as e:
-                raise Http404(f'Invalid sort')
+                self.get_logger().info(f'Invalid sort: {str(e)}')
+                raise Http404()
         else:
             results = search[offset:upper_paging_limit].execute()
 
@@ -1798,7 +1805,8 @@ class AdvancedSeekerView(SeekerView):
             if advanced_query['id'] not in excluded_facets:
                 facet = facet_lookup.get(advanced_query['id'])
                 if not facet:
-                    raise Http404(f'Invalid facet: {advanced_query["id"]}')
+                    self.get_logger().info(f'Invalid facet: {advanced_query["id"]}')
+                    raise Http404()
                 return facet.query(advanced_query['operator'], advanced_query['value']), [facet.field]
             return None, None
 
@@ -1807,7 +1815,8 @@ class AdvancedSeekerView(SeekerView):
             condition = advanced_query.get('condition')
             group_operator = self.boolean_translations.get(condition, None)
             if not group_operator:
-                raise Http404(f"'{condition}' is not a valid boolean operator.")
+                self.get_logger().info(f"'{condition}' is not a valid boolean operator.")
+                raise Http404()
 
             queries = []
             selected_facets = []
