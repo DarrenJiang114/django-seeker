@@ -1371,7 +1371,7 @@ class AdvancedSeekerView(SeekerView):
                 DeprecationWarning
             )
             
-    def get_logger(self, request):
+    def get_logger(self):
         return logger
 
     def modify_json_response(self, json_response, context):
